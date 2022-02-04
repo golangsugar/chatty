@@ -220,6 +220,12 @@ func Fatal(msg string) {
 	os.Exit(1)
 }
 
+// FatalErr writes messages with severityLevel=fatal, and stop program with os.Exit(1)
+func FatalErr(err error) {
+	write(severityLevelFatal, err.Error())
+	os.Exit(1)
+}
+
 // Fatalf writes messages with severityLevel=fatal, taking arguments in fmt.Printf format
 // Fatalf stops the program with os.Exit(1)
 func Fatalf(format string, args ...interface{}) {
