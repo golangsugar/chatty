@@ -13,11 +13,11 @@ import (
 )
 
 const (
-	severityLevelDebug   byte = 0
-	severityLevelInfo    byte = 1
-	severityLevelWarning byte = 2
-	severityLevelError   byte = 3
-	severityLevelFatal   byte = 4
+	severityLevelDebug   = "debug"
+	severityLevelInfo    = "info"
+	severityLevelWarning = "warning"
+	severityLevelError   = "error"
+	severityLevelFatal   = "fatal"
 
 	outputFormatJSON  = "json"
 	outputFormatPlain = "plain"
@@ -39,28 +39,38 @@ func init() {
 	defineOutputFormat()
 }
 
-func defineSeverityLevel() {
-	lsl := strings.ToLower(strings.TrimSpace(os.Getenv("LOG_SEVERITY_LEVEL")))
-
-	if lsl == "" {
-		return
+func guessSeverityLevel(sl string) (string, error) {
+	if sl == "" {
+		return severityLevelDefault, fmt.Errorf("empty severity level")
 	}
 
 	samePrefixOrEqual := func(mnemonic, s string) bool {
 		return mnemonic[:len(s)] == s
 	}
 
+	x := strings.ToLower(strings.TrimSpace(sl))
+
 	switch {
-	case samePrefixOrEqual("debug", lsl), samePrefixOrEqual("verbose", lsl):
-		severityLevelDefault = severityLevelDebug
-	case samePrefixOrEqual("info", lsl):
-		severityLevelDefault = severityLevelInfo
-	case samePrefixOrEqual("warning", lsl):
-		severityLevelDefault = severityLevelWarning
-	case samePrefixOrEqual("error", lsl):
-		severityLevelDefault = severityLevelError
-	case samePrefixOrEqual("fatal", lsl), samePrefixOrEqual("critical", lsl):
-		severityLevelDefault = severityLevelFatal
+	case samePrefixOrEqual(severityLevelDebug, x), samePrefixOrEqual("verbose", x):
+		return severityLevelDebug, nil
+	case samePrefixOrEqual(severityLevelInfo, x), samePrefixOrEqual("normal", x):
+		return severityLevelInfo, nil
+	case samePrefixOrEqual(severityLevelWarning, x):
+		return severityLevelWarning, nil
+	case samePrefixOrEqual(severityLevelError, x):
+		return severityLevelError, nil
+	case samePrefixOrEqual(severityLevelFatal, x), samePrefixOrEqual("critical", x):
+		return severityLevelFatal, nil
+	}
+
+	return severityLevelDefault, fmt.Errorf("unknown severity level %s", sl)
+}
+
+func defineSeverityLevel() {
+	var err error
+
+	if severityLevelDefault, err = guessSeverityLevel(os.Getenv("LOG_SEVERITY_LEVEL")); err != nil {
+		ErrorErr(err)
 	}
 }
 
@@ -119,42 +129,33 @@ func EscapeMessageStringForJSON(b bool) {
 	escapeMessageStringForJSON = b
 }
 
-func severityLevelAsString(sl byte) string {
-	switch sl {
-	case severityLevelDebug:
-		return "debug"
-	case severityLevelInfo:
-		return "info"
-	case severityLevelWarning:
-		return "warning"
-	case severityLevelError:
-		return "error"
-	case severityLevelFatal:
-		return "critical"
-	}
-
-	return "info"
-}
-
-func write(level byte, msg string) {
+func write(level string, msg string) {
 	if msg == "" {
 		return
 	}
 
-	if severityLevelDefault > level {
+	severityLevelMap := map[string]byte{
+		severityLevelDebug:   0,
+		severityLevelInfo:    1,
+		severityLevelWarning: 2,
+		severityLevelError:   3,
+		severityLevelFatal:   4,
+	}
+
+	if severityLevelMap[severityLevelDefault] > severityLevelMap[level] {
 		return
 	}
 
 	if outputFormatDefault == outputFormatJSON && escapeMessageStringForJSON {
 		if b, err := json.Marshal(msg); err != nil {
-			fmt.Printf(outputTemplatePlain, time.Now().String(), severityLevelAsString(severityLevelError), "error "+err.Error()+" marshalling message: "+msg)
+			fmt.Printf(outputTemplatePlain, time.Now().String(), severityLevelError, "error "+err.Error()+" marshalling message: "+msg)
 		} else {
 			// Trim the beginning and trailing " character
 			msg = string(b[1 : len(b)-1])
 		}
 	}
 
-	fmt.Printf(outputTemplateDefault, time.Now().String(), severityLevelAsString(level), msg)
+	fmt.Printf(outputTemplateDefault, time.Now().String(), level, msg)
 }
 
 // Debug writes messages with severityLevel=debug
@@ -281,6 +282,27 @@ func SetGlobalSeverityLevelFatal() {
 	SetSeverityLevelFatal()
 }
 
+// SetGlobalSeverityLevel  changes os environment variables in order to globally define the default severity level
+func SetGlobalSeverityLevel(sl string) {
+	severityLevel, err := guessSeverityLevel(sl)
+	if err != nil {
+		ErrorErr(err)
+	}
+
+	switch severityLevel {
+	case severityLevelDebug:
+		SetSeverityLevelDebug()
+	case severityLevelInfo:
+		SetSeverityLevelInfo()
+	case severityLevelWarning:
+		SetSeverityLevelWarning()
+	case severityLevelError:
+		SetSeverityLevelError()
+	case severityLevelFatal:
+		SetSeverityLevelFatal()
+	}
+}
+
 // SetGlobalOutputFormatJSON changes os environment variables in order to globally define the format used for printing out messages as JSON
 func SetGlobalOutputFormatJSON() {
 	if err := os.Setenv("LOG_OUTPUT_FORMAT", outputFormatJSON); err != nil {
@@ -297,4 +319,15 @@ func SetGlobalOutputFormatPlainText() {
 	}
 
 	SetOutputFormatPlainText()
+}
+
+// SetGlobalOutputFormat changes os environment variables in order to globally define the format used for printing out messages
+func SetGlobalOutputFormat(format string) {
+	if format == outputFormatJSON {
+		SetGlobalOutputFormatJSON()
+	} else if format == outputFormatPlain {
+		SetGlobalOutputFormatPlainText()
+	} else {
+		Errorf("unknown format given: %s", format)
+	}
 }
