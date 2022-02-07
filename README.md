@@ -1,6 +1,6 @@
 # Chatty
 ### Simple Micro Engine for Events Logging
-[![Go Report Card](https://goreportcard.com/badge/github.com/golangsugar/chatty)](https://goreportcard.com/report/github.com/golangsugar/chatty) &nbsp;
+[![Go Report Card](https://goreportcard.com/badge/github.com/golangsugar/chatty)](https://goreportcard.com/report/github.com/golangsugar/chatty)
 ---
 
 #### Downloading
