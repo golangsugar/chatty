@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -31,6 +32,8 @@ var (
 	outputFormatDefault        = outputFormatPlain
 	outputTemplateDefault      = outputTemplatePlain
 	escapeMessageStringForJSON = false
+	instanceLastRecord         string
+	instanceLastRecordMutex    sync.Mutex
 )
 
 func init() {
@@ -155,7 +158,11 @@ func write(level string, msg string) {
 		}
 	}
 
-	fmt.Printf(outputTemplateDefault, time.Now().String(), level, msg)
+	instanceLastRecordMutex.Lock()
+	instanceLastRecord = fmt.Sprintf(outputTemplateDefault, time.Now().String(), level, msg)
+	instanceLastRecordMutex.Unlock()
+
+	fmt.Print(instanceLastRecord)
 }
 
 // Debug writes messages with severityLevel=debug
@@ -330,4 +337,10 @@ func SetGlobalOutputFormat(format string) {
 	} else {
 		Errorf("unknown format given: %s", format)
 	}
+}
+
+// LastRecord returns the last recorded message.
+// It's designed for testing, but can also be used for sending the same message for two or more output engines
+func LastRecord() string {
+	return instanceLastRecord
 }
