@@ -80,19 +80,20 @@ func main() {
 }
 ```
 ```bash
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	error	empty severity level
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	debug	this message appears if the level was defined as debug
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	debug	debug message is hello world
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	info	database connected
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	info	user 10 changed its password
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	warning	query took more than 10 seconds
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	warning	blocking user 10 for too many login attempts
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	error	could not connect external service xyz
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	error	this is an example error
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	error	error querying user 10 investments: this is an example error
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	error	error querying user 10 investments: this is an example error
+2022-02-09T13:04:27+01:00	debug	this message appears if the level was defined as debug
+2022-02-09T13:04:27+01:00	debug	debug message is hello world
+2022-02-09T13:04:27+01:00	info	database connected
+2022-02-09T13:04:27+01:00	info	user 10 changed its password
+2022-02-09T13:04:27+01:00	info	including bank branch,	address=<nil>,	code=1588,	branch=münch
+2022-02-09T13:04:27+01:00	warning	blocking user 10 for too many login attempts
+2022-02-09T13:04:27+01:00	error	could not connect external service xyz
+2022-02-09T13:04:27+01:00	error	this is an example error
+2022-02-09T13:04:27+01:00	error	error querying user 10 investments: this is an example error
+2022-02-09T13:04:27+01:00	error	error including bank branch,	code=1588,	branch=münch,	error=this is an example error
+2022-02-09T13:04:27+01:00	error	error including bank branch,	code=1588,	branch=münch,	error=this is an example error
 
-2009-11-10 23:00:00 +0000 UTC m=+0.000000001	fatal	this is an example error
-[T+0000ms]
-Program exited.
+2022-02-09T13:04:27+01:00	fatal	this is an example error
+
+
+Process finished with the exit code 1
 ```
