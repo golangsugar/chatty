@@ -42,7 +42,8 @@ func main() {
 	
 	chatty.Infof("user %d changed its password", userID)
 
-	chatty.Warn("query took more than 10 seconds")
+	// InfoKV writes messages including a sequence of key-value pairs, with severityLevel=info
+	chatty.InfoKV("including bank branch", chatty.KVMap{"code":1588,"branch":"münch","address":nil})	
 
 	chatty.Warnf("blocking user %d for too many login attempts", userID)
 
@@ -51,7 +52,7 @@ func main() {
 	err := fmt.Errorf("this is an example error")
 	
 	chatty.ErrorErr(err)
-
+	
 	// ErrorErrReturn writes messages with severityLevel=error, taking arguments in fmt.Printf format
 	// It's provided as convenient one-liner return, for functions that returns an error
 	// Example:
@@ -60,6 +61,9 @@ func main() {
 	// }
 	
 	chatty.Errorf("error querying user %d investments: %v", userID, err)
+
+	// ErrorKV writes messages including a sequence of key-value pairs, with severityLevel=error
+	chatty.ErrorKV("error including bank branch", chatty.KVMap{"code":1588,"branch":"münch","error":err})
 	
 	// Fatal writes messages with severityLevel=fatal, and stop program with os.Exit(1)
 	// chatty.Fatal("ooops! critical failure") {
