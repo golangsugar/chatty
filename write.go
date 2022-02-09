@@ -25,7 +25,7 @@ func writeInternalError(now, level string, err error) {
 	fmt.Print(now + "\t" + level + "\t" + err.Error())
 }
 
-func jsonString(now, level, msg string, pairs ...logPair) string {
+func jsonString(now, level, msg string, pairs KVMap) string {
 	tmp := `{"ts":"` + now + `","level":"` + level + `","msg":"` + msg + `"`
 
 	if len(pairs) < 1 {
@@ -36,14 +36,14 @@ func jsonString(now, level, msg string, pairs ...logPair) string {
 
 	var value string
 
-	for _, kv := range pairs {
-		if s, ok := kv.Value.(string); ok {
+	for k, v := range pairs {
+		if s, ok := v.(string); ok {
 			value = s
 		} else {
-			value = fmt.Sprintf("%v", kv.Value)
+			value = fmt.Sprintf("%v", v)
 		}
 
-		if _, err := buffer.WriteString(`,"` + kv.Key + `":"` + value + `"`); err != nil {
+		if _, err := buffer.WriteString(`,"` + k + `":"` + value + `"`); err != nil {
 			writeInternalError(now, level, err)
 		}
 	}
@@ -51,7 +51,7 @@ func jsonString(now, level, msg string, pairs ...logPair) string {
 	return tmp + buffer.String() + "}"
 }
 
-func jsonMarshalledString(now, level, msg string, pairs ...logPair) string {
+func jsonMarshalledString(now, level, msg string, pairs KVMap) string {
 	dic := map[string]interface{}{
 		"ts":    now,
 		"level": level,
@@ -59,26 +59,20 @@ func jsonMarshalledString(now, level, msg string, pairs ...logPair) string {
 	}
 
 	if len(pairs) > 0 {
-		details := make(map[string]interface{})
-
-		for _, kv := range pairs {
-			details[kv.Key] = kv.Value
-		}
-
-		dic["details"] = details
+		dic["details"] = pairs
 	}
 
 	b, err := json.Marshal(dic)
 	if err != nil {
 		ErrorErr(err)
 		// Fallback json made with string handling
-		return jsonString(now, level, msg, pairs...)
+		return jsonString(now, level, msg, pairs)
 	}
 
 	return string(b)
 }
 
-func plainString(now, level, msg string, pairs ...logPair) string {
+func plainString(now, level, msg string, pairs KVMap) string {
 	tmp := now + "\t" + level + "\t" + msg
 
 	if len(pairs) < 1 {
@@ -88,14 +82,14 @@ func plainString(now, level, msg string, pairs ...logPair) string {
 	var buffer strings.Builder
 	var value string
 
-	for _, kv := range pairs {
-		if s, ok := kv.Value.(string); ok {
+	for k, v := range pairs {
+		if s, ok := v.(string); ok {
 			value = s
 		} else {
-			value = fmt.Sprintf("%v", kv.Value)
+			value = fmt.Sprintf("%v", v)
 		}
 
-		if _, err := buffer.WriteString(",\t" + kv.Key + `=` + value); err != nil {
+		if _, err := buffer.WriteString(",\t" + k + `=` + value); err != nil {
 			writeInternalError(now, level, err)
 		}
 	}
@@ -103,7 +97,7 @@ func plainString(now, level, msg string, pairs ...logPair) string {
 	return buffer.String() + "\n"
 }
 
-func write(level string, msg string, pairs ...logPair) {
+func write(level string, msg string, pairs KVMap) {
 	if msg == "" && len(pairs) < 1 {
 		return
 	}
@@ -118,12 +112,12 @@ func write(level string, msg string, pairs ...logPair) {
 
 	if outputFormatDefault == outputFormatJSON {
 		if !escapeInputForJSON {
-			record = jsonString(now, level, msg, pairs...)
+			record = jsonString(now, level, msg, pairs)
 		} else {
-			record = jsonMarshalledString(now, level, msg, pairs...)
+			record = jsonMarshalledString(now, level, msg, pairs)
 		}
 	} else {
-		record = plainString(now, level, msg, pairs...)
+		record = plainString(now, level, msg, pairs)
 	}
 
 	instanceLastRecordMutex.Lock()

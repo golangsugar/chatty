@@ -71,42 +71,42 @@ func EscapeInputForJSON(b bool) {
 
 // Debug writes messages with severityLevel=debug
 func Debug(msg string) {
-	write(severityLevelDebug, msg)
+	write(severityLevelDebug, msg, nil)
 }
 
 // Debugf writes messages with severityLevel=debug, taking arguments in fmt.Printf format
 func Debugf(format string, args ...interface{}) {
-	write(severityLevelDebug, fmt.Sprintf(format, args...))
+	write(severityLevelDebug, fmt.Sprintf(format, args...), nil)
 }
 
 // Info writes messages with severityLevel=info
 func Info(msg string) {
-	write(severityLevelInfo, msg)
+	write(severityLevelInfo, msg, nil)
 }
 
 // Infof writes messages with severityLevel=info, taking arguments in fmt.Printf format
 func Infof(format string, args ...interface{}) {
-	write(severityLevelInfo, fmt.Sprintf(format, args...))
+	write(severityLevelInfo, fmt.Sprintf(format, args...), nil)
 }
 
 // Warn writes messages with severityLevel=warning
 func Warn(msg string) {
-	write(severityLevelWarning, msg)
+	write(severityLevelWarning, msg, nil)
 }
 
 // Warnf writes messages with severityLevel=warning, taking arguments in fmt.Printf format
 func Warnf(format string, args ...interface{}) {
-	write(severityLevelWarning, fmt.Sprintf(format, args...))
+	write(severityLevelWarning, fmt.Sprintf(format, args...), nil)
 }
 
 // Error writes messages with severityLevel=error
 func Error(msg string) {
-	write(severityLevelError, msg)
+	write(severityLevelError, msg, nil)
 }
 
 // ErrorErr writes messages with severityLevel=error, taking an argument of type error
 func ErrorErr(err error) {
-	write(severityLevelError, err.Error())
+	write(severityLevelError, err.Error(), nil)
 }
 
 // ErrorErrReturn writes messages with severityLevel=error, taking arguments in fmt.Printf format
@@ -116,32 +116,32 @@ func ErrorErr(err error) {
 //     return logger.ErrorErrReturn(err)
 // }
 func ErrorErrReturn(err error) error {
-	write(severityLevelError, err.Error())
+	write(severityLevelError, err.Error(), nil)
 
 	return err
 }
 
 // Errorf writes messages with severityLevel=error, taking arguments in fmt.Printf format
 func Errorf(format string, args ...interface{}) {
-	write(severityLevelError, fmt.Sprintf(format, args...))
+	write(severityLevelError, fmt.Sprintf(format, args...), nil)
 }
 
 // Fatal writes messages with severityLevel=fatal, and stop program with os.Exit(1)
 func Fatal(msg string) {
-	write(severityLevelFatal, msg)
+	write(severityLevelFatal, msg, nil)
 	os.Exit(1)
 }
 
 // FatalErr writes messages with severityLevel=fatal, and stop program with os.Exit(1)
 func FatalErr(err error) {
-	write(severityLevelFatal, err.Error())
+	write(severityLevelFatal, err.Error(), nil)
 	os.Exit(1)
 }
 
 // Fatalf writes messages with severityLevel=fatal, taking arguments in fmt.Printf format
 // Fatalf stops the program with os.Exit(1)
 func Fatalf(format string, args ...interface{}) {
-	write(severityLevelFatal, fmt.Sprintf(format, args...))
+	write(severityLevelFatal, fmt.Sprintf(format, args...), nil)
 	os.Exit(1)
 }
 
