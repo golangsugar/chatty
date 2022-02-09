@@ -94,7 +94,7 @@ func plainString(now, level, msg string, pairs KVMap) string {
 		}
 	}
 
-	return buffer.String() + "\n"
+	return tmp + buffer.String() + "\n"
 }
 
 func write(level string, msg string, pairs KVMap) {
