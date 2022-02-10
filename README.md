@@ -15,7 +15,7 @@ go get -u github.com/golangsugar/chatty
 ```
 
 #### Using
-Run the code below online at https://goplay.tools/snippet/tWKaK04eiPY
+Run the code below online at https://goplay.tools/snippet/Ke--gR7MZiU
 
 ```go
 package main

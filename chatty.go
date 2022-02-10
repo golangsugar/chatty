@@ -42,7 +42,11 @@ func guessSeverityLevel(sl string) (string, error) {
 	}
 
 	samePrefixOrEqual := func(mnemonic, s string) bool {
-		return mnemonic[:len(s)] == s
+		if len(mnemonic) >= len(s) {
+			return mnemonic[:len(s)] == s
+		}
+
+		return strings.HasPrefix(s, mnemonic)
 	}
 
 	x := strings.ToLower(strings.TrimSpace(sl))
