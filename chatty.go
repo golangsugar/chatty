@@ -113,6 +113,14 @@ func ErrorErr(err error) {
 	write(severityLevelError, err.Error(), nil)
 }
 
+// ConditionalErrorErr received a message and an error. It writes the content ONLY IF the error is not null.
+// It sets severityLevel=error
+func ConditionalErrorErr(msg string, err error) {
+	if err != nil {
+		write(severityLevelError, msg+" "+err.Error(), nil)
+	}
+}
+
 // ErrorErrReturn writes messages with severityLevel=error, taking arguments in fmt.Printf format
 // It's provided as convenient one-liner return, for functions that returns an error
 // Examples:
