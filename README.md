@@ -3,6 +3,10 @@
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
 &nbsp;
 [![Go Report Card](https://goreportcard.com/badge/github.com/golangsugar/chatty)](https://goreportcard.com/report/github.com/golangsugar/chatty)
+&nbsp;
+[![Known Vulnerabilities](https://snyk.io/test/github/golangsugar/chatty/badge.svg)]
+&nbsp;
+(https://snyk.io/test/github/golangsugar/chatty)
 ---
 Chatty is a lightweight helper for events logging. <br />
 It consists in a simple wrapper over native fmt methods. </br />
@@ -13,6 +17,9 @@ The SeverityLevel can be defined with LOG_SEVERITY_LEVEL environment variable. <
 ```bash
 go get -u github.com/golangsugar/chatty
 ```
+
+#### Severity Levels
+Chatty can handle **DEBUG**, **INFO**, **WARNING**, **ERROR** and **FATAL** severity levels
 
 #### Using
 Run the code below online at https://goplay.tools/snippet/Ke--gR7MZiU
@@ -26,74 +33,65 @@ import (
 )
 
 func main() {
-	chatty.SetGlobalOutputFormat("plain")
-
-	chatty.SetGlobalSeverityLevel("debug")
-
-	chatty.Debug("this message appears if the level was defined as debug")
-
-	const world = "world"
+	// Options
+	// Chatty has local and global configuring routines.
 	
-	chatty.Debugf("debug message is hello %s", world)
-
-	chatty.Info("database connected")
-
-	const userID = 10
+	chatty.SetSeverityLevelDebug()
 	
-	chatty.Infof("user %d changed its password", userID)
+	chatty.SetOutputFormatPlainText()
+
+	// Set the log output format, globally internally changing env vars
+	//chatty.SetGlobalOutputFormat("plain")
+
+	// Set the log minimum severity level, globally internally changing env vars
+	//chatty.SetGlobalSeverityLevel("debug")
+	
+	
+	// Highlights
+	errx := fmt.Errorf("demonstration error")
+	
+	// You have a possible error that you need to log and nothing more.
+	chatty.ConditionalErrorErr("this message and the error will be printed only if the error is not nil", errx)
+	
+	// You need to log the error and exit. You got a one-liner convenient helper. 
+	go func()error{
+		return chatty.ErrorErrReturn(errx)
+    }()
 
 	// InfoKV writes messages including a sequence of key-value pairs, with severityLevel=info
-	chatty.InfoKV("including bank branch", chatty.KVMap{"code":1588,"branch":"münch","address":nil})	
-
-	chatty.Warnf("blocking user %d for too many login attempts", userID)
-
-	chatty.Error("could not connect external service xyz")
-
-	err := fmt.Errorf("this is an example error")
-	
-	chatty.ErrorErr(err)
-	
-	// ErrorErrReturn writes messages with severityLevel=error, taking arguments in fmt.Printf format
-	// It's provided as convenient one-liner return, for functions that returns an error
-	// Example:
-	// if err != nil {
-	//     return logger.ErrorErrReturn(err)
-	// }
-	
-	chatty.Errorf("error querying user %d investments: %v", userID, err)
-
-	// ErrorKV writes messages including a sequence of key-value pairs, with severityLevel=error
-	chatty.ErrorKV("error including bank branch", chatty.KVMap{"code":1588,"branch":"münch","error":err})
-	
-	// Fatal writes messages with severityLevel=fatal, and stop program with os.Exit(1)
-	// chatty.Fatal("ooops! critical failure") {
-
-	// Fatalf writes messages with severityLevel=fatal, taking arguments in fmt.Printf format
-	// Fatalf stops the program with os.Exit(1)
-	// chatty.Fatalf("this app is going to faint")
+	chatty.InfoKV("including bank branch", chatty.KVMap{"code":1588,"branch":"münch","address":nil})
 
 	// LastRecord returns the last recorded message.
 	// It's designed for testing, but can also be used for sending the same message for two or more output engines
 	fmt.Println(chatty.LastRecord())
-    
-	chatty.FatalErr(err)
+	
+	
+	// General Examples:
+	// For every severity level chatty enables at least 3 function signatures:
+	// X(message), Xf(message, params...) and XKV(message, kvPairs)
+	const world = "world"
+	const userID = 10
+	
+	chatty.Debug("this message appears if the level was defined as debug")
+	
+	chatty.Debugf("debug message is hello %s", world)
+
+	// DebugKV writes messages including a sequence of key-value pairs, with severityLevel=debug
+	chatty.InfoKV("server scheduled health-checker", chatty.KVMap{"foo":"bar","answer":42,"null":nil})
+
+	chatty.Info("database connected")
+
+	chatty.Warn("blocking user for too many login attempts")
+
+	chatty.Error("could not connect external service xyz")
+	
+	chatty.ErrorErr(errx)
+
+	// Fatal writes messages with severityLevel=fatal, and stop program with os.Exit(1)
+	// chatty.Fatal("ooops! critical failure") {
+	
+	chatty.FatalErr(errx)
 }
 ```
 ```bash
-2022-02-09T13:04:27+01:00	debug	this message appears if the level was defined as debug
-2022-02-09T13:04:27+01:00	debug	debug message is hello world
-2022-02-09T13:04:27+01:00	info	database connected
-2022-02-09T13:04:27+01:00	info	user 10 changed its password
-2022-02-09T13:04:27+01:00	info	including bank branch,	address=<nil>,	code=1588,	branch=münch
-2022-02-09T13:04:27+01:00	warning	blocking user 10 for too many login attempts
-2022-02-09T13:04:27+01:00	error	could not connect external service xyz
-2022-02-09T13:04:27+01:00	error	this is an example error
-2022-02-09T13:04:27+01:00	error	error querying user 10 investments: this is an example error
-2022-02-09T13:04:27+01:00	error	error including bank branch,	code=1588,	branch=münch,	error=this is an example error
-2022-02-09T13:04:27+01:00	error	error including bank branch,	code=1588,	branch=münch,	error=this is an example error
-
-2022-02-09T13:04:27+01:00	fatal	this is an example error
-
-
-Process finished with the exit code 1
 ```

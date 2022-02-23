@@ -9,7 +9,7 @@ func defineSeverityLevel() {
 	var err error
 
 	if severityLevelDefault, err = guessSeverityLevel(os.Getenv("LOG_SEVERITY_LEVEL")); err != nil {
-		ErrorErr(err)
+		Warn(err.Error())
 	}
 }
 
