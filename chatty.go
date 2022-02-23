@@ -38,7 +38,7 @@ func init() {
 
 func guessSeverityLevel(sl string) (string, error) {
 	if sl == "" {
-		return severityLevelDefault, fmt.Errorf("empty severity level. assuming default %s", severityLevelDefault)
+		return severityLevelDefault, fmt.Errorf("empty severity level. assuming default level \"%s\"", severityLevelDefault)
 	}
 
 	samePrefixOrEqual := func(mnemonic, s string) bool {

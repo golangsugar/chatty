@@ -3,18 +3,15 @@
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
 &nbsp;
 [![Go Report Card](https://goreportcard.com/badge/github.com/golangsugar/chatty)](https://goreportcard.com/report/github.com/golangsugar/chatty)
-&nbsp;
-[![Known Vulnerabilities](https://snyk.io/test/github/golangsugar/chatty/badge.svg)]
-&nbsp;
-(https://snyk.io/test/github/golangsugar/chatty)
+
 ---
 Chatty is a lightweight helper for events logging. <br />
-It consists in a simple wrapper over native fmt methods. </br />
-The OutputFormat can be defined with LOG_OUTPUT_FORMAT environment variable. </br />
-The SeverityLevel can be defined with LOG_SEVERITY_LEVEL environment variable. </br />
+It consists in a simple wrapper over native fmt methods. <br />
+The OutputFormat can be defined with LOG_OUTPUT_FORMAT environment variable. <br />
+The SeverityLevel can be defined with LOG_SEVERITY_LEVEL environment variable. <br />
 
 #### Downloading
-```bash
+```console
 go get -u github.com/golangsugar/chatty
 ```
 
@@ -22,7 +19,7 @@ go get -u github.com/golangsugar/chatty
 Chatty can handle **DEBUG**, **INFO**, **WARNING**, **ERROR** and **FATAL** severity levels
 
 #### Using
-Run the code below online at https://goplay.tools/snippet/Ke--gR7MZiU
+🔗 Run the code below online at https://go.dev/play/p/la8C2jFZ9IA
 
 ```go
 package main
@@ -48,6 +45,7 @@ func main() {
 	
 	
 	// Highlights
+	
 	errx := fmt.Errorf("demonstration error")
 	
 	// You have a possible error that you need to log and nothing more.
@@ -93,5 +91,21 @@ func main() {
 	chatty.FatalErr(errx)
 }
 ```
-```bash
+Outputs
+```console
+2009-11-10T23:00:00Z	warning	empty severity level. assuming default info
+2009-11-10T23:00:00Z	error	this message and the error will be printed only if the error is not nil demonstration error
+2009-11-10T23:00:00Z	info	including bank branch,	address=<nil>,	code=1588,	branch=münch
+2009-11-10T23:00:00Z	info	including bank branch,	address=<nil>,	code=1588,	branch=münch
+
+2009-11-10T23:00:00Z	debug	this message appears if the level was defined as debug
+2009-11-10T23:00:00Z	debug	debug message is hello world
+2009-11-10T23:00:00Z	info	server scheduled health-checker,	null=<nil>,	foo=bar,	answer=42
+2009-11-10T23:00:00Z	info	database connected
+2009-11-10T23:00:00Z	warning	blocking user for too many login attempts
+2009-11-10T23:00:00Z	error	could not connect external service xyz
+2009-11-10T23:00:00Z	error	demonstration error
+2009-11-10T23:00:00Z	fatal	demonstration error
+
+Program exited.
 ```
