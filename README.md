@@ -7,8 +7,6 @@
 ---
 Chatty is a lightweight helper for events logging. <br />
 It consists in a simple wrapper over native fmt methods. <br />
-The OutputFormat can be defined with LOG_OUTPUT_FORMAT environment variable. <br />
-The SeverityLevel can be defined with LOG_SEVERITY_LEVEL environment variable. <br />
 
 #### Downloading
 ```console
@@ -18,7 +16,11 @@ go get -u github.com/golangsugar/chatty
 #### Severity Levels
 Chatty can handle **DEBUG**, **INFO**, **WARNING**, **ERROR** and **FATAL** severity levels
 
-#### Using
+### Environment Variables
+- The OutputFormat can be defined with `LOG_OUTPUT_FORMAT` environment variable;
+- The SeverityLevel can be defined with `LOG_SEVERITY_LEVEL` environment variable.
+
+#### Examples
 🔗 Run the code below online at https://go.dev/play/p/la8C2jFZ9IA
 
 ```go
@@ -68,11 +70,10 @@ func main() {
 	// For every severity level chatty enables at least 3 function signatures:
 	// X(message), Xf(message, params...) and XKV(message, kvPairs)
 	const world = "world"
-	const userID = 10
-	
+
 	chatty.Debug("this message appears if the level was defined as debug")
 	
-	chatty.Debugf("debug message is hello %s", world)
+	chatty.Debugf("debug message is 'hello %s'", world)
 
 	// DebugKV writes messages including a sequence of key-value pairs, with severityLevel=debug
 	chatty.InfoKV("server scheduled health-checker", chatty.KVMap{"foo":"bar","answer":42,"null":nil})
