@@ -22,7 +22,13 @@ func writeInternalError(now, level string, err error) {
 		return
 	}
 
-	fmt.Print(now + "\t" + level + "\t" + err.Error())
+	e := ""
+
+	if err != nil {
+		e = err.Error()
+	}
+
+	fmt.Print(now + "\t" + level + "\t" + e)
 }
 
 func jsonString(now, level, msg string, pairs KVMap) string {

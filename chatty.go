@@ -110,7 +110,9 @@ func Error(msg string) {
 
 // ErrorErr writes messages with severityLevel=error, taking an argument of type error
 func ErrorErr(err error) {
-	write(severityLevelError, err.Error(), nil)
+	if err != nil {
+		write(severityLevelError, err.Error(), nil)
+	}
 }
 
 // ConditionalErrorErr received a message and an error. It writes the content ONLY IF the error is not null.
@@ -128,7 +130,9 @@ func ConditionalErrorErr(msg string, err error) {
 //     return logger.ErrorErrReturn(err)
 // }
 func ErrorErrReturn(err error) error {
-	write(severityLevelError, err.Error(), nil)
+	if err != nil {
+		write(severityLevelError, err.Error(), nil)
+	}
 
 	return err
 }
@@ -146,7 +150,10 @@ func Fatal(msg string) {
 
 // FatalErr writes messages with severityLevel=fatal, and stop program with os.Exit(1)
 func FatalErr(err error) {
-	write(severityLevelFatal, err.Error(), nil)
+	if err != nil {
+		write(severityLevelFatal, err.Error(), nil)
+	}
+
 	os.Exit(1)
 }
 
