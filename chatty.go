@@ -164,6 +164,30 @@ func Fatalf(format string, args ...interface{}) {
 	os.Exit(1)
 }
 
+// Verbose returns true if the severity level is debug
+func Verbose() bool {
+	if level, _ := guessSeverityLevel(os.Getenv("LOG_SEVERITY_LEVEL")); level == severityLevelDebug {
+		return true
+	}
+
+	return false
+}
+
+// Printf aims to satisfy external/3rd party packages that requires specific interfaces
+func Printf(format string, v ...interface{}) {
+	Debugf(format, v...)
+}
+
+// Logf aims to satisfy external/3rd party packages that requires specific interfaces
+func Logf(format string, v ...interface{}) {
+	Infof(format, v...)
+}
+
+// Log aims to satisfy external/3rd party packages that requires specific interfaces
+func Log(msg string) {
+	Info(msg)
+}
+
 // LastRecord returns the last recorded message.
 // It's designed for testing, but can also be used for sending the same message for two or more output engines
 func LastRecord() string {

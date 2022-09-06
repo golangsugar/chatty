@@ -103,6 +103,12 @@ func plainString(now, level, msg string, pairs KVMap) string {
 	return tmp + buffer.String() + "\n"
 }
 
+func instanceLastRecordUpdate(s string) {
+	instanceLastRecordMutex.Lock()
+	instanceLastRecord = s
+	instanceLastRecordMutex.Unlock()
+}
+
 func write(level string, msg string, pairs KVMap) {
 	if msg == "" && len(pairs) < 1 {
 		return
@@ -126,9 +132,7 @@ func write(level string, msg string, pairs KVMap) {
 		record = plainString(now, level, msg, pairs)
 	}
 
-	instanceLastRecordMutex.Lock()
-	instanceLastRecord = record
-	instanceLastRecordMutex.Unlock()
+	instanceLastRecordUpdate(record)
 
 	fmt.Print(instanceLastRecord)
 }
